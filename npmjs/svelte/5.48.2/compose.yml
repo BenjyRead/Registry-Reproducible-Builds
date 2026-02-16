@@ -1,0 +1,22 @@
+services:
+  builder:
+    build: ./builder
+    volumes:
+      - shared-data:/shared
+
+  official:
+    build: ./official
+    volumes:
+      - shared-data:/shared
+    depends_on:
+      - builder
+
+  diff:
+    build: ./diff
+    volumes:
+      - shared-data:/shared
+    depends_on:
+      - official
+
+volumes:
+  shared-data:
