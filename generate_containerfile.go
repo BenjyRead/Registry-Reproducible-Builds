@@ -12,7 +12,7 @@ import (
 // Simple CLI tool to generate a ContainerFile for a given npm package and version.
 // Usage: `go run generate_containerfile.go -dep "@sveltejs/adapter-auto:^7.0.0"`
 // Or: `go run generate_containerfile.go -name "@sveltejs/adapter-auto" -version "^7.0.0"`
-// NOTE: This is GPT coded
+// NOTE: This is GPT coded, please verify and test
 func main() {
 	dep := flag.String("dep", "", `Dependency string e.g. "@sveltejs/adapter-auto:^7.0.0"`)
 	name := flag.String("name", "", "Package name e.g. @sveltejs/adapter-auto")
@@ -60,7 +60,9 @@ func main() {
 		if err != nil {
 			exitErr(err)
 		}
-		f.Close()
+		if err := f.Close(); err != nil {
+			exitErr(err)
+		}
 		fmt.Println("Created:", containerFile)
 	} else {
 		fmt.Println("Containerfile already exists:", containerFile)
