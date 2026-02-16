@@ -1,5 +1,6 @@
 # -- Build Stage --
-FROM docker.io/library/alpine:3.23 AS build
+# FROM docker.io/library/alpine:3.23 AS build
+FROM docker.io/library/node:23-alpine AS build
 
 RUN apk add --no-cache git pnpm
 
@@ -20,7 +21,8 @@ RUN cd packages/svelte && pnpm pack --pack-destination /out
 # RUN printf '\n' >> /tmp/svelte-5.48.2.tgz
 
 # -- Pull Stage --
-FROM docker.io/library/alpine:3.23 AS official
+# FROM docker.io/library/alpine:3.23 AS official
+FROM docker.io/library/node:23-alpine AS official
 
 RUN apk add --no-cache wget
 
