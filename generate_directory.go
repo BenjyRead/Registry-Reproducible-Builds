@@ -9,9 +9,9 @@ import (
 	"strings"
 )
 
-// Simple CLI tool to generate a ContainerFile for a given npm package and version.
-// Usage: `go run generate_containerfile.go -dep "@sveltejs/adapter-auto:^7.0.0"`
-// Or: `go run generate_containerfile.go -name "@sveltejs/adapter-auto" -version "^7.0.0"`
+// Simple CLI tool to generate a .gitkeep file for a given npm package and version.
+// Usage: `go run generate_directory.go -dep "@sveltejs/adapter-auto:^7.0.0"`
+// Or: `go run generate_directory.go -name "@sveltejs/adapter-auto" -version "^7.0.0"`
 // NOTE: This is GPT coded, please verify and test
 func main() {
 	dep := flag.String("dep", "", `Dependency string e.g. "@sveltejs/adapter-auto:^7.0.0"`)
@@ -53,19 +53,19 @@ func main() {
 		exitErr(err)
 	}
 
-	containerFile := filepath.Join(path, "Containerfile")
+	gitkeep := filepath.Join(path, ".gitkeep")
 
-	if _, err := os.Stat(containerFile); os.IsNotExist(err) {
-		f, err := os.Create(containerFile)
+	if _, err := os.Stat(gitkeep); os.IsNotExist(err) {
+		f, err := os.Create(gitkeep)
 		if err != nil {
 			exitErr(err)
 		}
 		if err := f.Close(); err != nil {
 			exitErr(err)
 		}
-		fmt.Println("Created:", containerFile)
+		fmt.Println("Created:", gitkeep)
 	} else {
-		fmt.Println("Containerfile already exists:", containerFile)
+		fmt.Println("Gitkeep already exists:", gitkeep)
 	}
 }
 
