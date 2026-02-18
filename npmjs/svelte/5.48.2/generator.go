@@ -16,7 +16,7 @@ type ContainerConfig struct {
 }
 
 func main() {
-	bytes, error := os.ReadFile("cmd/rep-build/templates/PNPM_Containerfile")
+	bytes, error := os.ReadFile("templates/PNPM_Containerfile")
 	if error != nil {
 		println("Error reading template file:", error.Error())
 		return
@@ -36,7 +36,7 @@ func main() {
 
 	t := template.Must(template.New("Containerfile").Parse(tmpl))
 
-	containerfile, err := os.Create("cmd/rep-build/npmjs/svelte/5.48.2/Containerfile")
+	containerfile, err := os.Create("npmjs/svelte/5.48.2/Containerfile")
 	if err != nil {
 		println("Error creating Containerfile:", err.Error())
 		return
