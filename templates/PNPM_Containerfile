@@ -11,10 +11,11 @@ RUN git fetch --depth 1 origin {{.COMMIT_SHA}}
 RUN git checkout {{.COMMIT_SHA}}
 
 RUN pnpm install --frozen-lockfile
-RUN pnpm build --filter ./packages/svelte
+RUN pnpm build --filter ./{{.BUILD_DIR}}
 
 # pnpm pack generate tgz file
-RUN cd packages/svelte && pnpm pack --pack-destination /out
+RUN cd {{.BUILD_DIR}} && \
+    pnpm pack --pack-destination /out
 
 # Testing diffoscope works
 # RUN printf '\n' >> /tmp/svelte-5.48.2.tgz
@@ -35,4 +36,15 @@ RUN apk add --no-cache diffoscope
 COPY --from=build /out/{{.TGZ_FILENAME}} /tmp/build.tgz
 COPY --from=official /out/official.tgz /tmp/official.tgz
 
-CMD sh -c "set -x; diffoscope /tmp/build.tgz /tmp/official.tgz"
+CMD sh -c "\
+    set -x; \
+    diffoscope /tmp/build.tgz /tmp/official.tgz > /tmp/diffoscope.txt; \
+    if [ -s /tmp/diffoscope.txt ]; then \
+    echo 'Reproducible Build Test Failed'; \
+    echo 'Diffoscope Output:'; \
+    cat /tmp/diffoscope.txt; \
+    exit 1; \
+    else \
+    echo 'Reproducible Build Test Passed'; \
+    exit 0; \
+    fi"
