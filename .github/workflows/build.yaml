@@ -3,8 +3,8 @@ name: Reproducible Build
 on:
   push:
     # branches: [main]
-    paths:
-      - 'cmd/rep-build/**'
+    # paths:
+    #   - 'cmd/rep-build/**'
   workflow_dispatch:
 
 jobs:
@@ -27,11 +27,11 @@ jobs:
       #TODO: automatically scan the leaf nodes of the dependency graph for generator.go files instead of hardcoding the path
       - name: Generate Containerfiles
         run: |
-          go run cmd/rep-build/npmjs/svelte/5.48.2/generator.go
+          go run npmjs/svelte/5.48.2/generator.go
 
       - name: Build Container Images
         run: |
-          podman build -f cmd/rep-build/npmjs/svelte/5.48.2/Containerfile \
+          podman build -f npmjs/svelte/5.48.2/Containerfile \
           -t svelte:5.48.2 .
 
       - name: Run reproducibility checks
