@@ -1,4 +1,5 @@
-> [!Warning] DO NOT push code/make PR's on GitHub, this is a mirror of the original codebase (On GitLab), which is
+> [!WARNING]
+> DO NOT push code/make PR's on GitHub, this is a mirror of the original codebase (On GitLab), which is
 > private. Please clone the original repository and push your code there.
 
 # Reproducible Build Component
