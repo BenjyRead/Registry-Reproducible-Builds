@@ -12,7 +12,6 @@ import (
 // Simple CLI tool to generate a .gitkeep file for a given npm package and version.
 // Usage: `go run generate_directory.go -dep "@sveltejs/adapter-auto:^7.0.0"`
 // Or: `go run generate_directory.go -name "@sveltejs/adapter-auto" -version "^7.0.0"`
-// NOTE: This is GPT coded, please verify and test
 func main() {
 	dep := flag.String("dep", "", `Dependency string e.g. "@sveltejs/adapter-auto:^7.0.0"`)
 	name := flag.String("name", "", "Package name e.g. @sveltejs/adapter-auto")
@@ -25,13 +24,13 @@ func main() {
 	if *dep != "" {
 		parts := strings.Split(*dep, ":")
 		if len(parts) != 2 {
-			exitErr(errors.New("invalid -dep format, expected name:version"))
+			panic(errors.New("invalid -dep format, expected name:version"))
 		}
 		pkgName = strings.TrimSpace(parts[0])
 		pkgVersion = strings.TrimSpace(parts[1])
 	} else {
 		if *name == "" || *version == "" {
-			exitErr(errors.New("provide either -dep or both -name and -version"))
+			panic(errors.New("provide either -dep or both -name and -version"))
 		}
 		pkgName = *name
 		pkgVersion = *version
@@ -50,7 +49,7 @@ func main() {
 
 	err := os.MkdirAll(path, 0o755)
 	if err != nil {
-		exitErr(err)
+		panic(err)
 	}
 
 	gitkeep := filepath.Join(path, ".gitkeep")
@@ -58,10 +57,10 @@ func main() {
 	if _, err := os.Stat(gitkeep); os.IsNotExist(err) {
 		f, err := os.Create(gitkeep)
 		if err != nil {
-			exitErr(err)
+			panic(err.Error())
 		}
 		if err := f.Close(); err != nil {
-			exitErr(err)
+			panic(err.Error())
 		}
 		fmt.Println("Created:", gitkeep)
 	} else {
@@ -76,7 +75,7 @@ func splitPackage(name string) (scope, pkg string) {
 		name = strings.TrimPrefix(name, "@")
 		parts := strings.Split(name, "/")
 		if len(parts) != 2 {
-			exitErr(errors.New("invalid scoped package format"))
+			panic(errors.New("invalid scoped package format"))
 		}
 		return parts[0], parts[1]
 	}
@@ -88,9 +87,4 @@ func cleanVersion(v string) string {
 	v = strings.TrimSpace(v)
 	v = strings.TrimLeft(v, "^~>=<")
 	return v
-}
-
-func exitErr(err error) {
-	fmt.Fprintln(os.Stderr, "Error:", err)
-	os.Exit(1)
 }
