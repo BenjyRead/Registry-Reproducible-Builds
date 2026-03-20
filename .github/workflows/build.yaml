@@ -14,20 +14,27 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v6
 
-      - name: Install Podman
+      - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y podman
+          sudo apt-get install -y podman yq
+          curl -o /usr/local/bin/gomplate -sSL https://github.com/hairyhenderson/gomplate/releases/download/v5.0.0/gomplate_linux-amd64
+          chmod 755 /usr/local/bin/gomplate
 
-      - name: Setup Go
-        uses: actions/setup-go@v6
-        with:
-          go-version: '1.25.6'
 
-      #TODO: automatically scan the leaf nodes of the dependency graph for generator.go files instead of hardcoding the path
+      #TODO: automatically scan the leaf nodes of the dependency graph for build.yaml files instead of hardcoding the path
       - name: Generate Containerfiles
         run: |
-          go run npmjs/svelte/5.48.2/generator.go
+          set -e
+          set -x
+          # Read template name
+          package_dir="npmjs/svelte/5.48.2"
+          template_path="$package_dir/build.yaml"
+          template_name=$(yq -r ".TEMPLATE" "$template_path")
+          containerfile_path="templates/$template_name"
+
+
+          gomplate -c .="$template_path" -f "$containerfile_path" -o "$package_dir/Containerfile"
 
       - name: Build Container Images
         run: |
