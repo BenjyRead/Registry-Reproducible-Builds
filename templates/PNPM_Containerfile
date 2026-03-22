@@ -1,5 +1,5 @@
 # -- Build Stage --
-FROM {{.NODE_IMAGE | default "node:23-alpine"}} AS build
+FROM {{index . "NODE_IMAGE" | default "node:23-alpine"}} AS build
 
 RUN apk add --no-cache git pnpm
 
@@ -21,7 +21,7 @@ RUN cd {{.BUILD_DIR}} && \
 # RUN printf '\n' >> /tmp/svelte-5.48.2.tgz
 
 # -- Pull Stage --
-FROM {{.NODE_IMAGE | default "node:23-alpine"}} AS official
+FROM {{index . "NODE_IMAGE" | default "node:23-alpine"}} AS official
 
 RUN apk add --no-cache wget
 
@@ -29,7 +29,7 @@ RUN mkdir -p /out
 RUN wget {{.OFFICIAL_TGZ_URL}} -O /out/official.tgz
 
 # -- Compare Stage --
-FROM {{.ALPINE_IMAGE | default "alpine:3.23"}}
+FROM {{index . "ALPINE_IMAGE" | default "alpine:3.23"}}
 
 RUN apk add --no-cache diffoscope
 
